@@ -43,7 +43,7 @@ Here is a list of currently available and soon to be available chart patterns:
 
 Install the `chart_patterns` package by cloning this repo. Place the folder in your working directory.
 
-> git clone XXXX
+> git clone https://github.com/zeta-zetra/chart_patterns
 
 Make sure to install the required packages using the requirements.txt file. 
 
