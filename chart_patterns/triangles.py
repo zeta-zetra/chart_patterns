@@ -11,10 +11,11 @@ import plotly.graph_objects as go
 
 from chart_patterns.chart_patterns.pivot_points import find_all_pivot_points
 from scipy.stats import linregress
+from tqdm import tqdm
 
 def find_triangle_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: int = 3, rlimit: int = 0.9, 
                           slmax_limit: float = 0.00001, slmin_limit: float = 0.00001,
-                          triangle_type: str = "ascending" ) -> pd.DataFrame:
+                          triangle_type: str = "ascending", progress: bool = False ) -> pd.DataFrame:
     """
     Find the specified triangle pattern 
     
@@ -39,6 +40,8 @@ def find_triangle_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: in
     :params triangle_type is the type of triangle pattern to detect. Options - ["ascending", "descending", "symmetrical"]
     :type :str 
     
+    :params progress bar to be displayed or not
+    :type :bool
     
     :return (pd.DataFrame)
     """
@@ -57,7 +60,12 @@ def find_triangle_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: in
     # Find the pivot points
     ohlc = find_all_pivot_points(ohlc)   
     
-    for candle_idx in range(lookback, len(ohlc)):
+    if not progress:
+        candle_iter = range(lookback, len(ohlc))
+    else:
+        candle_iter = tqdm(range(lookback, len(ohlc)), desc="Finding triangle patterns")
+    
+    for candle_idx in candle_iter:
         
         maxim = np.array([])
         minim = np.array([])

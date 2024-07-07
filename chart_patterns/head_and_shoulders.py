@@ -11,13 +11,14 @@ import plotly.graph_objects as go
 from chart_patterns.chart_patterns.charts_utils import find_points
 from chart_patterns.chart_patterns.pivot_points import find_all_pivot_points
 from scipy.stats import linregress
+from tqdm import tqdm
 from typing import Tuple
 
 
 
 def find_head_and_shoulders_pattern(ohlc: pd.DataFrame, lookback: int = 60, pivot_interval: int = 10, short_pivot_interval: int = 5,
                                     head_ratio_before: float = 1.0002, head_ratio_after: float = 1.0002,
-                                    upper_slmin: float = 1e-4) -> pd.DataFrame:
+                                    upper_slmin: float = 1e-4, progress: bool = False) -> pd.DataFrame:
     """
     Find all head and shoulder chart patterns
 
@@ -42,6 +43,9 @@ def find_head_and_shoulders_pattern(ohlc: pd.DataFrame, lookback: int = 60, pivo
     :params upper_slmin is the upper limit of the neckline slope of the pattern
     :type :float 
     
+    :params progress bar to be displayed or not 
+    :type :bool
+    
     :return (pd.DataFrame)
     """
 
@@ -52,16 +56,21 @@ def find_head_and_shoulders_pattern(ohlc: pd.DataFrame, lookback: int = 60, pivo
     if short_pivot_interval >= pivot_interval:
         raise ValueError(f"short_pivot_interval must be less than pivot_interval")
     
-    ohlc["hs_lookback"]   = lookback
-    ohlc["chart_type"]    = ""
-    ohlc["hs_idx"]        = [np.array([]) for _ in range(len(ohlc)) ]
-    ohlc["hs_point"]      = [np.array([]) for _ in range(len(ohlc)) ]    
+    ohlc.loc[:,"hs_lookback"]   = lookback
+    ohlc.loc[:,"chart_type"]    = ""
+    ohlc.loc[:,"hs_idx"]        = [np.array([]) for _ in range(len(ohlc)) ]
+    ohlc.loc[:,"hs_point"]      = [np.array([]) for _ in range(len(ohlc)) ]    
     
     # Find the pivot points   
     ohlc = find_all_pivot_points(ohlc, left_count=pivot_interval, right_count=pivot_interval)
     ohlc = find_all_pivot_points(ohlc, left_count=short_pivot_interval, right_count=short_pivot_interval, name_pivot="short_pivot")
     
-    for candle_idx in range(lookback, len(ohlc)):
+    if not progress:
+        candle_iter = range(lookback, len(ohlc))
+    else:
+        candle_iter = tqdm(range(lookback, len(ohlc)), desc="Finding head and shoulders patterns...")
+    
+    for candle_idx in candle_iter:
 
         if ohlc.loc[candle_idx, "pivot"] != 2 or ohlc.loc[candle_idx, "short_pivot"] != 2:
             continue

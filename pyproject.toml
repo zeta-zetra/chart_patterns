@@ -12,6 +12,8 @@ pandas = "1.3.5"
 plotly = "^5.18.0"
 scipy = "1.8.0"
 pytest = "^7.4.4"
+kaleido = "0.1.0post1"
+tqdm = "^4.66.4"
 
 
 [build-system]

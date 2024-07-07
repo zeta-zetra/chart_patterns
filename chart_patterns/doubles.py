@@ -10,10 +10,11 @@ import plotly.graph_objects as go
 
 
 from chart_patterns.chart_patterns.pivot_points import find_all_pivot_points
-
+from tqdm import tqdm
 
 def find_doubles_pattern(ohlc: pd.DataFrame, lookback: int = 25, double: str = "tops", 
-                         tops_max_ratio: float = 1.01, bottoms_min_ratio: float = 0.98 ) -> pd.DataFrame:
+                         tops_max_ratio: float = 1.01, bottoms_min_ratio: float = 0.98,
+                         progress: bool = False) -> pd.DataFrame:
     """
     Find the Double chart patterns 
     
@@ -32,6 +33,9 @@ def find_doubles_pattern(ohlc: pd.DataFrame, lookback: int = 25, double: str = "
     params bottoms_min_ratio is the min ratio between the trough points in the bottoms chart pattern
     :type :float 
     
+    :params progress bar to be displayed or not 
+    :type:bool
+    
     :return (pd.DataFrame)
     """
     
@@ -44,8 +48,13 @@ def find_doubles_pattern(ohlc: pd.DataFrame, lookback: int = 25, double: str = "
     
     # Find the pivot points
     ohlc = find_all_pivot_points(ohlc)
-        
-    for candle_idx in range(lookback, len(ohlc)):
+    
+    if not progress:
+        candle_iter =  range(lookback, len(ohlc))
+    else:
+        candle_iter =  tqdm(range(lookback, len(ohlc)), desc=f"Finding doubles patterns...")
+           
+    for candle_idx in candle_iter:
         sub_ohlc = ohlc.loc[candle_idx-lookback: candle_idx,:]
         
         pivot_indx = [ i for i, p in zip(sub_ohlc["pivot"].index.values, sub_ohlc["pivot"].tolist()) if p != 0 ]

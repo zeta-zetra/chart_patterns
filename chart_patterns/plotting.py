@@ -13,6 +13,7 @@ import sys
 
 from chart_patterns.chart_patterns.utils import check_ohlc_names
 from plotly.subplots import make_subplots
+from tqdm import tqdm
 from typing import Dict, List, Union
 
 
@@ -271,6 +272,7 @@ def _add_flag_pattern_plot(row: Union[tuple, pd.DataFrame], fig: go.Candlestick)
     """
     
     if isinstance(row, pd.DataFrame):
+
         x_low_vals      = row["flag_lows_idx"].tolist()[0].tolist()
         y_low_vals_arr  = row["flag_slmin"]*row["flag_lows_idx"] + row["flag_intercmin"]
         y_low_vals      = y_low_vals_arr.tolist()[0].tolist()
@@ -369,9 +371,38 @@ def display_chart_pattern(ohlc: pd.DataFrame, pattern: str = "flag",
     elif pattern == "triangle":
         pattern_points = ohlc.loc[ohlc["chart_type"]=="triangle"]
             
-    if len(pattern_points) > 1:
+    
+    if len(pattern_points) == 0: # There is no pattern found
+        print(f"There are no `{pattern}` patterns detected.")
+    elif len(pattern_points) == 1:
+        # Get the Candlestick figure object
+        fig = _plot_candlestick(ohlc)
+        
+        # Add the pivot points 
+        fig = _plot_pivot_points(ohlc, fig, pivot_name)    
+                    
+        # Set the theme   
+        fig = set_theme(fig)
+            
+        if pattern == "flag":
+            # Plot the Flag pattern
+            fig = _add_flag_pattern_plot(pattern_points, fig)
+        elif pattern == "double":
+            fig = _add_doubles_pattern_plot(pattern_points, fig)
+        elif pattern == "hs":
+            fig = _add_head_shoulder_pattern_plot(pattern_points, fig)
+        elif pattern == "ihs":
+            fig  = _add_head_shoulder_pattern_plot(pattern_points, fig, "ihs_idx", "ihs_point")
+        elif pattern == "triangle":
+                fig  = _add_triangle_pattern_plot(pattern_points, fig)
+                
+        if save:
+            save_chart_pattern(fig, pattern, None)
+        else:
+            fig.show()
+    elif len(pattern_points) > 1:
              
-      for row in pattern_points.iterrows():
+      for row in tqdm(pattern_points.iterrows(), desc=f"Saving the {pattern} charts..."):
             # Get the row index
             pattern_point = row[0]
             
@@ -411,31 +442,4 @@ def display_chart_pattern(ohlc: pd.DataFrame, pattern: str = "flag",
                 
       if save:
         sys.exit()
-        
-    else:
-        
-        # Get the Candlestick figure object
-        fig = _plot_candlestick(ohlc)
-        
-        # Add the pivot points 
-        fig = _plot_pivot_points(ohlc, fig, pivot_name)    
-                    
-        # Set the theme   
-        fig = set_theme(fig)
-            
-        if pattern == "flag":
-            # Plot the Flag pattern
-            fig = _add_flag_pattern_plot(pattern_points, fig)
-        elif pattern == "double":
-            fig = _add_doubles_pattern_plot(pattern_points, fig)
-        elif pattern == "hs":
-            fig = _add_head_shoulder_pattern_plot(pattern_points, fig)
-        elif pattern == "ihs":
-            fig  = _add_head_shoulder_pattern_plot(pattern_points, fig, "ihs_idx", "ihs_point")
-        elif pattern == "triangle":
-                fig  = _add_triangle_pattern_plot(pattern_points, fig)
-                
-        if save:
-            save_chart_pattern(fig, pattern, None)
-        else:
-            fig.show()
+              

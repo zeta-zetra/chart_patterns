@@ -11,12 +11,13 @@ import plotly.graph_objects as go
 from chart_patterns.chart_patterns.charts_utils import find_points
 from chart_patterns.chart_patterns.pivot_points import find_all_pivot_points
 from scipy.stats import linregress
+from tqdm import tqdm
 from typing import Tuple
 
 
 def find_inverse_head_and_shoulders(ohlc: pd.DataFrame, lookback: int = 60, pivot_interval: int = 10, short_pivot_interval: int = 5,
                                     head_ratio_before: float = 0.98, head_ratio_after: float = 0.98,
-                                    upper_slmax: float = 1e-4) -> pd.DataFrame:
+                                    upper_slmax: float = 1e-4, progress: bool = False) -> pd.DataFrame:
     """
     Find all the inverse head and shoulders chart patterns
 
@@ -41,6 +42,9 @@ def find_inverse_head_and_shoulders(ohlc: pd.DataFrame, lookback: int = 60, pivo
     :params upper_slmax is the upper limit of the neckline slope of the pattern
     :type :float 
     
+    :params progress bar to be displayed or not 
+    :type :bool
+    
     :return (pd.DataFrame)
     """
     if short_pivot_interval <= 0 or pivot_interval <= 0:
@@ -57,8 +61,14 @@ def find_inverse_head_and_shoulders(ohlc: pd.DataFrame, lookback: int = 60, pivo
      # Find the pivot points   
     ohlc = find_all_pivot_points(ohlc, left_count=pivot_interval, right_count=pivot_interval)
     ohlc = find_all_pivot_points(ohlc, left_count=short_pivot_interval, right_count=short_pivot_interval, name_pivot="short_pivot")
+    
+    
+    if not progress:
+        candle_iter = range(lookback, len(ohlc))
+    else:
+        candle_iter = tqdm(range(lookback, len(ohlc)), desc="Finding inverse head and shoulder patterns...")
        
-    for candle_idx in range(lookback, len(ohlc)):
+    for candle_idx in candle_iter:
         
         if ohlc.loc[candle_idx, "pivot"] != 1 or ohlc.loc[candle_idx,"short_pivot"] != 1:
             continue

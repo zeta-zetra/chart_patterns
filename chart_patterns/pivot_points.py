@@ -7,12 +7,15 @@ Author: Zetra Team
 import numpy as np
 import pandas as pd 
 
+
 from chart_patterns.chart_patterns.utils import check_ohlc_names
+from tqdm import tqdm
 from typing import Union
 
 
 
-def find_pivot_point(ohlc: pd.DataFrame, current_row: int, left_count:int = 3, right_count:int =3) -> int:
+def find_pivot_point(ohlc: pd.DataFrame, current_row: int, left_count:int = 3, right_count:int =3, 
+                     progress: bool = False) -> int:
     """
     Check if the current row (i.e. point) is a pivot point
     
@@ -42,7 +45,12 @@ def find_pivot_point(ohlc: pd.DataFrame, current_row: int, left_count:int = 3, r
     pivot_low  = 1
     pivot_high = 1
 
-    for idx in range(current_row - left_count, current_row + right_count + 1):
+    if not progress:
+        index_iter = range(current_row - left_count, current_row + right_count + 1)
+    else:
+        index_iter = tqdm(range(current_row - left_count, current_row + right_count + 1), desc="Finding all pivot points...")
+
+    for idx in index_iter:
         if(ohlc.loc[current_row, "low"] > ohlc.loc[idx, "low"]):
             pivot_low = 0
 
@@ -60,7 +68,8 @@ def find_pivot_point(ohlc: pd.DataFrame, current_row: int, left_count:int = 3, r
     else:
         return 0
 
-def find_all_pivot_points(ohlc: pd.DataFrame, left_count:int = 3, right_count:int = 3, name_pivot: Union[None, str] = None ) -> pd.DataFrame:
+def find_all_pivot_points(ohlc: pd.DataFrame, left_count:int = 3, right_count:int = 3, name_pivot: Union[None, str] = None, 
+                          progress: bool = False ) -> pd.DataFrame:
     """
     Find the all the pivot points for the given OHLC dataframe
 
@@ -73,17 +82,20 @@ def find_all_pivot_points(ohlc: pd.DataFrame, left_count:int = 3, right_count:in
     :params right_count is the number of candles to right to consider 
     :type :int 
     
+    :params progress bar to be displayed or not 
+    :type :bool 
+     
     :return (pd.DataFrame)
     """
 
 
     if name_pivot != None:
-        ohlc[name_pivot] = ohlc.apply(lambda row: find_pivot_point(ohlc, row.name, left_count, right_count), axis=1)
-        ohlc[f"{name_pivot}_pos"] =  ohlc.apply(lambda row: find_pivot_point_position(row), axis=1)
+        ohlc.loc[:,name_pivot] = ohlc.apply(lambda row: find_pivot_point(ohlc, row.name, left_count, right_count), axis=1)
+        ohlc.loc[:,f"{name_pivot}_pos"] =  ohlc.apply(lambda row: find_pivot_point_position(row), axis=1)
     else:
         # Get the pivot points 
-        ohlc["pivot"]     = ohlc.apply(lambda row: find_pivot_point(ohlc, row.name, left_count, right_count), axis=1)
-        ohlc['pivot_pos'] = ohlc.apply(lambda row: find_pivot_point_position(row), axis=1)
+        ohlc.loc[:,"pivot"]     = ohlc.apply(lambda row: find_pivot_point(ohlc, row.name, left_count, right_count), axis=1)
+        ohlc.loc[:,'pivot_pos'] = ohlc.apply(lambda row: find_pivot_point_position(row), axis=1)
 
 
     return ohlc 

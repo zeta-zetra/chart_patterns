@@ -13,11 +13,12 @@ import plotly.graph_objects as go
 
 from chart_patterns.chart_patterns.pivot_points import find_all_pivot_points
 from scipy.stats import linregress
-
+from tqdm import tqdm
 
 def find_flag_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: int = 3,
                       r_max: float = 0.9, r_min: float = 0.9, slope_max: float = 0, slope_min: float = 0, 
-                      lower_ratio_slope: float = 0.9, upper_ratio_slope: float = 1.05) -> pd.DataFrame:
+                      lower_ratio_slope: float = 0.9, upper_ratio_slope: float = 1.05,
+                      progress: bool = False) -> pd.DataFrame:
     """
     Find the flag pattern 
     
@@ -48,6 +49,9 @@ def find_flag_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: int = 
     :params upper_ratio_slope is the upper limit for the ratio of the slope min to slope max
     :type :float   
     
+    :params progress bar to be displayed or not 
+    :type :bool
+    
     :return (pd.DataFrame)
     """
     ohlc["chart_type"]        = ""
@@ -65,7 +69,12 @@ def find_flag_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: int = 
     ohlc = find_all_pivot_points(ohlc)
     
     
-    for candle_idx in range(lookback, len(ohlc)):
+    if not progress:
+        candle_iter = range(lookback, len(ohlc))
+    else:
+        candle_iter = tqdm(range(lookback, len(ohlc)), desc="Finding flag patterns...")
+    
+    for candle_idx in candle_iter:
     
         maxim = np.array([])
         minim = np.array([])
