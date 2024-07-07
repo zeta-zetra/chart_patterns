@@ -74,6 +74,7 @@ def find_doubles_pattern(ohlc: pd.DataFrame, lookback: int = 25, double: str = "
                         ohlc.loc[candle_idx, "double_type"]   = "tops"
                         ohlc.loc[candle_idx, "chart_type"]    = "double"
                         
+                        
             # Find Double Bottoms            
             elif double == "bottoms" or double == "both":
               if (pivots[0] > pivots[1]) and (pivots[0] > pivots[3]) and (pivots[2] > pivots[1]) and \
@@ -83,6 +84,7 @@ def find_doubles_pattern(ohlc: pd.DataFrame, lookback: int = 25, double: str = "
                         ohlc.at[candle_idx, "double_point"]   = pivots
                         ohlc.loc[candle_idx, "double_type"]   = "bottoms"                         
                         ohlc.loc[candle_idx, "chart_type"]    = "double"
+                        
     return ohlc
     
 

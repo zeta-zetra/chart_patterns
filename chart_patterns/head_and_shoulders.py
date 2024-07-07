@@ -16,7 +16,7 @@ from typing import Tuple
 
 
 
-def find_head_and_shoulders_pattern(ohlc: pd.DataFrame, lookback: int = 60, pivot_interval: int = 10, short_pivot_interval: int = 5,
+def find_head_and_shoulders(ohlc: pd.DataFrame, lookback: int = 60, pivot_interval: int = 10, short_pivot_interval: int = 5,
                                     head_ratio_before: float = 1.0002, head_ratio_after: float = 1.0002,
                                     upper_slmin: float = 1e-4, progress: bool = False) -> pd.DataFrame:
     """

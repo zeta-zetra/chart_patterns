@@ -98,6 +98,7 @@ def find_triangle_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: in
                     ohlc.at[candle_idx,  "triangle_high_idx"]     = xxmax
                     ohlc.at[candle_idx,  "triangle_low_idx"]      = xxmin
                     ohlc.loc[candle_idx, "triangle_point"]        = candle_idx
+                    
 
         elif triangle_type == "ascending":
             if abs(rmax)>=rlimit and abs(rmin)>=rlimit and slmin>=slmin_limit and (slmax>=-1*slmax_limit and slmax <= slmax_limit):
@@ -110,6 +111,7 @@ def find_triangle_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: in
                     ohlc.at[candle_idx,  "triangle_high_idx"]     = xxmax
                     ohlc.at[candle_idx,  "triangle_low_idx"]      = xxmin
                     ohlc.loc[candle_idx, "triangle_point"]        = candle_idx
+                    
     
         elif triangle_type == "descending":
             if abs(rmax)>=rlimit and abs(rmin)>=rlimit and slmax<=-1*slmax_limit and (slmin>=-1*slmin_limit and slmin <= slmin_limit):
@@ -122,7 +124,7 @@ def find_triangle_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: in
                     ohlc.at[candle_idx,  "triangle_high_idx"]     = xxmax
                     ohlc.at[candle_idx,  "triangle_low_idx"]      = xxmin
                     ohlc.loc[candle_idx, "triangle_point"]        = candle_idx   
-                    
+                    print(f"Found pattern at index: {candle_idx}")
     return ohlc
 
 

@@ -92,8 +92,7 @@ def find_inverse_head_and_shoulders(ohlc: pd.DataFrame, lookback: int = 60, pivo
             minim[headidx+1]-minim[headidx]> 0 and abs(slmax)<=upper_slmax and \
             xxmax[0]>xxmin[headidx-1] and xxmax[1]<xxmin[headidx+1]: 
 
-                print(f"head_ratio_before: {minim[headidx]/minim[headidx-1]}")
-                print(f"head_ratio_after : {minim[headidx]/minim[headidx+1]}")
+
                 ohlc.loc[candle_idx, "chart_type"] = "ihs"
             
                 # Get the index and values of the IHS chart pattern
@@ -103,7 +102,6 @@ def find_inverse_head_and_shoulders(ohlc: pd.DataFrame, lookback: int = 60, pivo
                 # Create a tuple of the index and values and sort them by the index
                 list_idx_values       =  [ (i, v) for i, v in zip(indexes, values)]
                  
-                
                 # Assign the index and values
                 ohlc.at[candle_idx, "ihs_idx"]   = [ t[0] for t in list_idx_values]
                 ohlc.at[candle_idx, "ihs_point"] = [ t[1] for t in list_idx_values]    

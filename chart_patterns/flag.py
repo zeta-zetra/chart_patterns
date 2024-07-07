@@ -115,7 +115,6 @@ def find_flag_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: int = 
                             ohlc.loc[candle_idx, "flag_slmin"]         = slmin 
                             ohlc.loc[candle_idx, "flag_intercmin"]     = intercmin
                             ohlc.loc[candle_idx, "flag_intercmax"]     = intercmax
-                                    
                             
     return ohlc 
 
