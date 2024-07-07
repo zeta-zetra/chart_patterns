@@ -40,7 +40,7 @@ Thumbs.db
 #######################
 *~
 
-
+__pycache__/
 # Virtual environment #
 #######################
 venv/

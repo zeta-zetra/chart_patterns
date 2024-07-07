@@ -1,7 +1,7 @@
-# ChartPatterns - Automate the detection of chart patterns
+# ChartPatterns - Automate the detection of chart patterns with Python
 
 Make it easy to detect well-known chart patterns such as ascending triangles, head and shoulders, flag, etc with the `chart_patterns` python
-library.  Like Thomas Bulkowski says in his book, `Encyclopedia of Chart Patterns`, "To knowledgeable investors, chart patterns are not squiggles on a price chart; they are the footprints of the smart money." This python package hopeful helps in this regard.
+library.  Like Thomas Bulkowski says in his book, `Encyclopedia of Chart Patterns`, "To knowledgeable investors, chart patterns are not squiggles on a price chart; they are the footprints of the smart money." This python package hopefully helps in this regard.
 
 Table of Contents
 =================
