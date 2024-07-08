@@ -258,6 +258,50 @@ def _add_triangle_pattern_plot(row: Union[tuple, pd.DataFrame], fig: go.Candlest
     return fig 
 
 
+def _add_pennant_pattern_plot(row: Union[tuple, pd.DataFrame], fig: go.Candlestick) -> go.Candlestick:
+    """
+     Add the pennant pattern to the figure object
+    
+    :params row is either a pandas dataframe or a row that has the pennant chart pattern info.
+    :type :Union[tuple, pd.DataFrame]
+    
+    :params fig is the figure object
+    :type :go.Candlestick
+    
+    :return (go.Candlestick)   
+    """
+    
+    if isinstance(row, pd.DataFrame):
+    
+        x_low_vals      = row["pennant_lows_idx"].tolist()[0].tolist()
+        y_low_vals_arr  = row["pennant_slmin"]*row["pennant_lows_idx"] + row["pennant_intercmin"]
+        y_low_vals      = y_low_vals_arr.tolist()[0].tolist()
+        
+        x_high_vals      = row["pennant_highs_idx"].tolist()[0].tolist()
+        y_high_vals_arr  = row["pennant_slmax"]*row["pennant_highs_idx"] + row["pennant_intercmax"]
+        y_high_vals      = y_high_vals_arr.tolist()[0].tolist()    
+        
+    else:
+        
+        x_low_vals      = row[1]["pennant_lows_idx"]
+        y_low_vals_arr  = row[1]["pennant_slmin"]*row[1]["pennant_lows_idx"] + row[1]["pennant_intercmin"]
+        y_low_vals      = y_low_vals_arr
+        
+        x_high_vals      = row[1]["pennant_highs_idx"]
+        y_high_vals_arr  = row[1]["pennant_slmax"]*row[1]["pennant_highs_idx"] + row[1]["pennant_intercmax"]
+        y_high_vals      = y_high_vals_arr   
+        
+    fig.add_scatter(x = x_low_vals , y = y_low_vals,
+                    mode='lines',
+                    name=None, line=dict(color='royalblue', width=4), showlegend=False )
+    
+    fig.add_scatter(x = x_high_vals , y = y_high_vals,
+                    mode='lines',
+                    name=None, line=dict(color='royalblue', width=4), showlegend=False)      
+
+    return fig 
+
+
 def _add_flag_pattern_plot(row: Union[tuple, pd.DataFrame], fig: go.Candlestick) -> go.Candlestick:
     """
     Add the flag pattern to the figure object
@@ -370,6 +414,8 @@ def display_chart_pattern(ohlc: pd.DataFrame, pattern: str = "flag",
         pattern_points = ohlc.loc[ohlc["chart_type"]=="ihs"]        
     elif pattern == "triangle":
         pattern_points = ohlc.loc[ohlc["chart_type"]=="triangle"]
+    elif pattern == "pennant":
+        pattern_points = ohlc.loc[ohlc["chart_type"]=="pennant"]
             
     
     if len(pattern_points) == 0: # There is no pattern found
@@ -395,6 +441,8 @@ def display_chart_pattern(ohlc: pd.DataFrame, pattern: str = "flag",
             fig  = _add_head_shoulder_pattern_plot(pattern_points, fig, "ihs_idx", "ihs_point")
         elif pattern == "triangle":
                 fig  = _add_triangle_pattern_plot(pattern_points, fig)
+        elif pattern == "pennant":
+            fig = _add_pennant_pattern_plot(pattern_points, fig)
                 
         if save:
             save_chart_pattern(fig, pattern, None)
@@ -436,6 +484,8 @@ def display_chart_pattern(ohlc: pd.DataFrame, pattern: str = "flag",
                 fig  = _add_head_shoulder_pattern_plot(row, fig, "ihs_idx", "ihs_point")
             elif pattern == "triangle":
                 fig  = _add_triangle_pattern_plot(row, fig)
+            elif pattern == "pennant":
+                fig = _add_pennant_pattern_plot(row, fig)
             
             # Save the figures 
             save_chart_pattern(fig, pattern, row)

@@ -14,6 +14,7 @@ Table of Contents
    * [Head and Shoulders](#head-and-shoulders)
    * [Inverse Head and Shoulders](#inverse-head-and-shoulders)
    * [Triangles](#triangles) 
+   * [Pennant](#pennant)
 * [Resources](#resources)
 
 
@@ -31,7 +32,7 @@ Here is a list of currently available and soon to be available chart patterns:
 
 - [x] Triangles
 
-- Pennant
+- [x] Pennant
 
 - Rounding bottom and top
 
@@ -159,8 +160,26 @@ In the `find_doubles_pattern` function one can change the following:
 ```
 
 
+### Pennant
+
+```
+import pandas as pd
+from chart_patterns.chart_patterns.pennant import find_pennant
+from chart_patterns.chart_patterns.plotting import display_chart_pattern
+
+# read in your ohlc data 
+ohlc = pd.read_csv("eurusd-4h.csv")  # headers must include - open, high, low, close
+
+# Find the head and shoulers pattern
+ohlc = find_pennant(ohlc, progress=True)
+
+
+# Plot the results 
+display_chart_pattern(ohlc, pattern="pennant")
+
+```
 
 
 ## Resources
 
-We have a [YouTube channel](https://www.youtube.com/@zetratrading/featured) where we go through the code of the chart patterns. In addition, we have a get [repo](https://github.com/zeta-zetra/code#automate-chart-patterns) with extra code covering other trading related material. 
+We have a [YouTube channel](https://www.youtube.com/@zetratrading/featured) where we go through the code of the chart patterns. In addition, we have a git [repo](https://github.com/zeta-zetra/code#automate-chart-patterns) with extra code covering other trading related material. 

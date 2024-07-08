@@ -105,7 +105,7 @@ def find_flag_pattern(ohlc: pd.DataFrame, lookback: int = 25, min_points: int = 
         # Check if the lines are parallel 
         if abs(rmax)>=r_max and abs(rmin)>=r_min and (slmin > slope_min and slmax > slope_max ) or (slmin < slope_min and slmax < slope_max):
                         if (slmin/slmax > lower_ratio_slope and slmin/slmax < upper_ratio_slope):
-                            ohlc.loc[candle_idx,"chart_type"]                         = "flag"
+                            ohlc.loc[candle_idx,"chart_type"]          = "flag"
                             ohlc.loc[candle_idx, "flag_point"]         = candle_idx
                             ohlc.at[candle_idx, "flag_highs"]          = maxim
                             ohlc.at[candle_idx, "flag_lows"]           = minim
