@@ -100,14 +100,14 @@ In the `find_doubles_pattern` function one can change the following:
 
 ```
  import pandas as pd
- from chart_patterns.chart_patterns.head_and_shoulders import find_head_and_shoulders_pattern
+ from chart_patterns.chart_patterns.head_and_shoulders import find_head_and_shoulders
  from chart_patterns.chart_patterns.plotting import display_chart_pattern
 
  # read in your ohlc data 
  ohlc = pd.read_csv("eurusd-4h.csv")  # headers must include - open, high, low, close
 
  # Find the head and shoulers pattern
- ohlc = find_head_and_shoulders_pattern(ohlc)
+ ohlc = find_head_and_shoulders(ohlc)
 
  # Plot the results 
  display_chart_pattern(ohlc, pattern="hs") # If multiple patterns were found, then plots will saved inside a folder named images/hs  
