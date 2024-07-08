@@ -20,7 +20,7 @@ Table of Contents
 
 ## Available Chart Patterns
 
-Here is a list of currently available and soon to be available chart patterns:
+Here is a list of available chart patterns:
 
 - [x] Doubles
 
@@ -34,11 +34,6 @@ Here is a list of currently available and soon to be available chart patterns:
 
 - [x] Pennant
 
-- Rounding bottom 
-
-- Triples
-
-- Wedge
 
 ## Installation
 
