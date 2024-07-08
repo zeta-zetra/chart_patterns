@@ -15,7 +15,10 @@ from tqdm import tqdm
 
 
 
-def find_pennant(ohlc: pd.DataFrame, lookback: int = 20, progress: bool = False) -> pd.DataFrame:
+def find_pennant(ohlc: pd.DataFrame, lookback: int = 20, min_points: int = 3,
+                r_max: float = 0.9, r_min: float = 0.9, slope_max: float = -0.0001, slope_min: float = 0.0001, 
+                 lower_ratio_slope: float = 0.95, upper_ratio_slope: float = 1,
+                 progress: bool = False) -> pd.DataFrame:
     """
     Find the pennant pattern point
     
@@ -24,6 +27,27 @@ def find_pennant(ohlc: pd.DataFrame, lookback: int = 20, progress: bool = False)
     
     :params lookback is the number of periods to use for back candles
     :type :int 
+ 
+    :params min_points is the minimum of pivot points to use to detect a flag pattern
+    :type :int
+    
+    :params r_max is the R-sqaured fit for the high pivot points
+    :type :float
+    
+    :params r_min is the R-sqaured fit for the low pivot points
+    :type :float    
+    
+    :params slope_max is the slope for the high pivot points
+    :type :float    
+    
+    :params slope_min is the slope for the low pivot points
+    :type :float    
+    
+    :params lower_ratio_slope is the lower limit for the ratio of the slope min to slope max
+    :type :float    
+    
+    :params upper_ratio_slope is the upper limit for the ratio of the slope min to slope max
+    :type :float  
     
     :params progress bar to be displayed or not 
     :type :bool
@@ -68,7 +92,7 @@ def find_pennant(ohlc: pd.DataFrame, lookback: int = 20, progress: bool = False)
 
         
         # Check the correct number of pivot points have been found
-        if (xxmax.size <3 and xxmin.size <3) or xxmax.size==0 or xxmin.size==0:
+        if (xxmax.size < min_points and xxmin.size < min_points) or xxmax.size==0 or xxmin.size==0:
             continue
 
          # Run the regress to get the slope, intercepts and r-squared
@@ -77,7 +101,7 @@ def find_pennant(ohlc: pd.DataFrame, lookback: int = 20, progress: bool = False)
         
         
         
-        if abs(rmax)>=0.9 and abs(rmin)>=0.9 and slmin>=0.0001 and slmax<=-0.0001 and abs(slmax/slmin) > 0.95 and abs(slmax/slmin) < 1:
+        if abs(rmax)>=r_max and abs(rmin)>=r_min and slmin>=slope_min  and slmax<= slope_max  and abs(slmax/slmin) > lower_ratio_slope and abs(slmax/slmin) < upper_ratio_slope:
                 ohlc.loc[candle_idx,"chart_type"]          = "pennant"
                 ohlc.loc[candle_idx, "pennant_point"]         = candle_idx
                 ohlc.at[candle_idx, "pennant_highs"]          = maxim

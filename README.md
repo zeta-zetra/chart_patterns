@@ -34,7 +34,7 @@ Here is a list of currently available and soon to be available chart patterns:
 
 - [x] Pennant
 
-- Rounding bottom and top
+- Rounding bottom 
 
 - Triples
 
